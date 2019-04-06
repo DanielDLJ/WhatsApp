@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "931742569619",
+    "firebase_url": "https://whatsapp-27fcb.firebaseio.com",
+    "project_id": "whatsapp-27fcb",
+    "storage_bucket": "whatsapp-27fcb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931742569619:android:80c8042d6af90689",
+        "android_client_info": {
+          "package_name": "br.com.DanielDLJ.WhatsApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "931742569619-1p356k3e4388aqv0u0k5u1r078dp4m9n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.DanielDLJ.WhatsApp",
+            "certificate_hash": "9261a8b780519e466cb9c8dc9020ba38b1b5a02a"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXDp0av0BSHes6x_bnQN55A9ADoHXRLWE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "931742569619-fo1bcmau200fhcqtc4jol4qptk4il0c0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
