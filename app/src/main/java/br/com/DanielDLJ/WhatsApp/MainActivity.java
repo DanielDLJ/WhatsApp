@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
         rootRef = FirebaseDatabase.getInstance().getReference();
 
-        Log.d(Tag,"currentUser.getEmail() = "+currentUser.getEmail());
 
         mToolbar =  (Toolbar) findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.child("name").exists()){
                     Toast.makeText(MainActivity.this,"Welcome", Toast.LENGTH_SHORT).show();
+                    Log.d(Tag,"currentUser.getEmail() = "+currentUser.getEmail());
                 }else {
                     SendUserToSettingsActivity();
                 }
@@ -99,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
     }
     private void SendUserToSettingsActivity() {
         Intent settingsIntent = new Intent(MainActivity.this,SettingsActivity.class);
-        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(settingsIntent);
     }
 
