@@ -101,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
         Intent settingsIntent = new Intent(MainActivity.this,SettingsActivity.class);
         startActivity(settingsIntent);
     }
+    private void SendUserToFindFriendsActivity() {
+        Intent findFriendsIntent = new Intent(MainActivity.this,FindFriendsActivity.class);
+        startActivity(findFriendsIntent);
+    }
 
     private void requestNewGroup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialog);
@@ -161,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
             SendUserToSettingsActivity();
         }
         if(item.getItemId() == R.id.main_find_friends_options){
+            SendUserToFindFriendsActivity();
 
         }
         return true;
