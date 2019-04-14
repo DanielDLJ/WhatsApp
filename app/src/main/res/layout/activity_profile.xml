@@ -59,4 +59,19 @@
         android:layout_marginRight="65dp"
         android:layout_below="@id/visit_profile_status"/>
 
+    <Button
+        android:id="@+id/decline_message_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancel Chat Request"
+        android:textColor="@android:color/background_light"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:background="@drawable/buttons"
+        android:layout_marginTop="6dp"
+        android:layout_marginLeft="65dp"
+        android:layout_marginRight="65dp"
+        android:layout_below="@id/send_message_button"
+        android:visibility="invisible"/>
+
 </RelativeLayout>
