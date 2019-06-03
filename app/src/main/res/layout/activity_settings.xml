@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
+    <include
+        android:id="@+id/settings_toolbar"
+        layout="@layout/app_bar_layout">
+
+    </include>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
@@ -16,7 +21,7 @@
         app:civ_border_width="5dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp" />
+        android:layout_marginTop="90dp" />
     
     <EditText
         android:id="@+id/set_user_name"

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -49,6 +50,8 @@ public class SettingsActivity extends AppCompatActivity {
     private static final int galleryPick = 1;
     private ProgressDialog loadingBar;
 
+    private Toolbar settingsToolBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +87,12 @@ public class SettingsActivity extends AppCompatActivity {
         userStatus = findViewById(R.id.set_user_status);
         userProfileImage = findViewById(R.id.profile_image);
         loadingBar = new ProgressDialog(this);
+
+        settingsToolBar = findViewById(R.id.settings_toolbar);
+        setSupportActionBar(settingsToolBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setTitle("Account Settings");
 
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
@@ -179,11 +188,11 @@ public class SettingsActivity extends AppCompatActivity {
         if(TextUtils.isEmpty(setUserStatus)){
             Toast.makeText(SettingsActivity.this,"Please write your status first...", Toast.LENGTH_LONG).show();
         }else {
-            HashMap<String,String> profileMap = new HashMap<>();
+            HashMap<String,Object> profileMap = new HashMap<>();
             profileMap.put("uid" , currentUserID);
             profileMap.put("name" , setUserName);
             profileMap.put("status" , setUserStatus);
-            rootRef.child("Users").child(currentUserID).setValue(profileMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            rootRef.child("Users").child(currentUserID).updateChildren(profileMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
