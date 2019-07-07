@@ -76,21 +76,40 @@ public class ContactsFragment extends Fragment {
                 usersRef.child(userIDs).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.hasChild("image")){
-                            String retrieveUserName = dataSnapshot.child("name").getValue().toString();
-                            String retrieveUserStatus = dataSnapshot.child("status").getValue().toString();
-                            String retrieveProfileImage = dataSnapshot.child("image").getValue().toString();
-                            Log.d(Tag,"retrieveProfileImage = "+retrieveProfileImage);
+                        if (dataSnapshot.exists()) {
+                            if (dataSnapshot.child("userState").hasChild("state")) {
+                                String state = dataSnapshot.child("userState").child("state").getValue().toString();
+                                String date = dataSnapshot.child("userState").child("date").getValue().toString();
+                                String time = dataSnapshot.child("userState").child("time").getValue().toString();
 
-                            holder.userName.setText(retrieveUserName);
-                            holder.userStatus.setText(retrieveUserStatus);
-                            Picasso.get().load(retrieveProfileImage).placeholder(R.drawable.profile_image).into(holder.profileImage);
-                        }else {
-                            String retrieveUserName = dataSnapshot.child("name").getValue().toString();
-                            String retrieveUserStatus = dataSnapshot.child("status").getValue().toString();
+                                if (state.equals("online")) {
+                                    holder.statusOnline.setVisibility(View.VISIBLE);
+                                }
+                                else if (state.equals("offline")) {
+                                    holder.statusOnline.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                            else {
+                                holder.statusOnline.setVisibility(View.INVISIBLE);
+                            }
 
-                            holder.userName.setText(retrieveUserName);
-                            holder.userStatus.setText(retrieveUserStatus);
+
+                            if (dataSnapshot.hasChild("image")) {
+                                String userImage = dataSnapshot.child("image").getValue().toString();
+                                String profileName = dataSnapshot.child("name").getValue().toString();
+                                String profileStatus = dataSnapshot.child("status").getValue().toString();
+
+                                holder.userName.setText(profileName);
+                                holder.userStatus.setText(profileStatus);
+                                Picasso.get().load(userImage).placeholder(R.drawable.profile_image).into(holder.profileImage);
+                            }
+                            else {
+                                String profileName = dataSnapshot.child("name").getValue().toString();
+                                String profileStatus = dataSnapshot.child("status").getValue().toString();
+
+                                holder.userName.setText(profileName);
+                                holder.userStatus.setText(profileStatus);
+                            }
                         }
                     }
 
