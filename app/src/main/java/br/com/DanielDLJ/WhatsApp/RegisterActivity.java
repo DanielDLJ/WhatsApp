@@ -2,8 +2,8 @@ package br.com.DanielDLJ.WhatsApp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -18,6 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -76,11 +77,18 @@ public class RegisterActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
 
+                        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
                         String currentUserID = mAuth.getCurrentUser().getUid();
                         rootRef.child("Users").child(currentUserID).setValue("");
-                        Toast.makeText(RegisterActivity.this,"Account Create Successfully", Toast.LENGTH_SHORT).show();
-                        loadingBar.dismiss();
+
+
+                        rootRef.child("Users").child(currentUserID).child("device_token")
+                                .setValue(deviceToken);
+
                         SendUserToMainActivity();
+                        Toast.makeText(RegisterActivity.this, "Account Created Successfully...", Toast.LENGTH_SHORT).show();
+                        loadingBar.dismiss();
                     }else {
                         String message = task.getException().toString();
                         Toast.makeText(RegisterActivity.this,"Error: "+message, Toast.LENGTH_LONG).show();

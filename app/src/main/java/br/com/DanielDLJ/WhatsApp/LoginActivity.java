@@ -1,10 +1,9 @@
 package br.com.DanielDLJ.WhatsApp;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -17,11 +16,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    private DatabaseReference usersRef;
     private ProgressDialog loadingBar;
 
     private Button loginButton, phoneLogginButton;
@@ -77,9 +79,22 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
-                        SendUserToMainActivity();
-                        Toast.makeText(LoginActivity.this,"Logged in Successful...", Toast.LENGTH_SHORT).show();
-                        loadingBar.dismiss();
+                        String currentUserId = mAuth.getCurrentUser().getUid();
+                        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
+
+                        usersRef.child(currentUserId).child("device_token")
+                                .setValue(deviceToken)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            SendUserToMainActivity();
+                                            Toast.makeText(LoginActivity.this, "Logged in Successful...", Toast.LENGTH_SHORT).show();
+                                            loadingBar.dismiss();
+                                        }
+                                    }
+                                });
                     }else {
                         String message = task.getException().toString();
                         Toast.makeText(LoginActivity.this,"Error: "+message, Toast.LENGTH_LONG).show();
@@ -98,6 +113,7 @@ public class LoginActivity extends AppCompatActivity {
         needNewAccountLink = findViewById(R.id.need_new_account_link);
         forgetPasswordLink = findViewById(R.id.forget_password_link);
         loadingBar = new ProgressDialog(this);
+        usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
     }
 
     private void SendUserToMainActivity() {
