@@ -78,7 +78,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private String saveCurrentTime, saveCurrentDate;
     private String checker="", myUrl="";
-    private StorageTask uploadTask;
+    //private StorageTask uploadTask;
     private Uri fileUri;
 
     private ProgressDialog loadingBar;
@@ -142,9 +142,15 @@ public class ChatActivity extends AppCompatActivity {
                                 break;
                             case 1:
                                 checker = "pdf";
+                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                intent.setType("application/pdf");
+                                startActivityForResult(intent.createChooser(intent,"Select PDF File"),438);
                                 break;
                             case 2:
                                 checker = "docx";
+                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                intent.setType("application/msword");
+                                startActivityForResult(intent.createChooser(intent,"Select MS Word File"),438);
                                 break;
                         }
                     }
@@ -248,6 +254,69 @@ public class ChatActivity extends AppCompatActivity {
 
             fileUri = data.getData();
             if(!checker.equals("image")){
+                final StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Document Files");
+                final String messageSenderRef = "Messages/" + messageSenderID + "/" + messageReceiverID;
+                final String messageReceiverRef = "Messages/" + messageReceiverID + "/" + messageSenderID;
+
+                DatabaseReference userMessageKeyRef = rootRef.child("Messages")
+                        .child(messageSenderID).child(messageReceiverID).push();
+                final String messagePushID = userMessageKeyRef.getKey();
+                final StorageReference filePath = storageReference.child(messagePushID + "." + checker);
+                //uploadTask = filePath.putFile(fileUri);
+
+                filePath.putFile(fileUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if(task.isSuccessful()){
+
+                            StorageReference dateRef = storageReference.child(messagePushID + "." + checker );
+                            dateRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+                            {
+                                @Override
+                                public void onSuccess(Uri downloadUrl)
+                                {
+                                    Log.d(TAG,"downloadUrl = "+downloadUrl.toString());
+                                    myUrl = downloadUrl.toString();
+
+                                    HashMap messageImageBody = new HashMap();
+                                    messageImageBody.put("message", myUrl);
+                                    messageImageBody.put("name", fileUri.getLastPathSegment());
+                                    messageImageBody.put("type", checker);
+                                    messageImageBody.put("from", messageSenderID);
+                                    messageImageBody.put("to", messageReceiverID);
+                                    messageImageBody.put("messageID", messagePushID);
+                                    messageImageBody.put("time", saveCurrentTime);
+                                    messageImageBody.put("date", saveCurrentDate);
+
+                                    Map messageBodyDetails = new HashMap();
+                                    messageBodyDetails.put(messageSenderRef + "/" + messagePushID, messageImageBody);
+                                    messageBodyDetails.put( messageReceiverRef + "/" + messagePushID, messageImageBody);
+
+                                    rootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
+                                        @Override
+                                        public void onComplete(@NonNull Task task) {
+                                            loadingBar.dismiss();
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(ChatActivity.this, "Message Sent Successfully...", Toast.LENGTH_SHORT).show();
+                                            }
+                                            else {
+                                                String message = task.getException().toString();
+                                                Toast.makeText(ChatActivity.this, "Error: "+message, Toast.LENGTH_LONG).show();
+                                            }
+                                            messageInputText.setText("");
+                                        }
+                                    });
+                                }
+                            });
+
+                        }else {
+                            loadingBar.dismiss();
+                            String message = task.getException().toString();
+                            Toast.makeText(ChatActivity.this, "Error: "+message, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
             }else if(checker.equals("image")){
                 final StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Image Files");
                 final String messageSenderRef = "Messages/" + messageSenderID + "/" + messageReceiverID;
@@ -257,7 +326,7 @@ public class ChatActivity extends AppCompatActivity {
                         .child(messageSenderID).child(messageReceiverID).push();
                 final String messagePushID = userMessageKeyRef.getKey();
                 final StorageReference filePath = storageReference.child(messagePushID + ".jpg");
-                uploadTask = filePath.putFile(fileUri);
+                //uploadTask = filePath.putFile(fileUri);
 
 
 
